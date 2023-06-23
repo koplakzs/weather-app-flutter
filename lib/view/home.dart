@@ -11,38 +11,220 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final TextEditingController city = TextEditingController();
+  String capitalizeWord(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
+  String capitalizeEachWord(String input) {
+    List<String> words = input.split(' ');
+
+    for (int i = 0; i < words.length; i++) {
+      if (words[i].isNotEmpty) {
+        words[i] =
+            words[i][0].toUpperCase() + words[i].substring(1).toLowerCase();
+      }
+    }
+
+    String result = words.join(' ');
+
+    return result;
+  }
+
+  String? path;
   @override
   Widget build(BuildContext context) {
     final wheaterViewModel = Provider.of<WeatherViewModel>(context);
+    void onPress(String city) {
+      wheaterViewModel.fetchWeather(city);
+      print(wheaterViewModel.weather!.main);
+      switch (wheaterViewModel.weather!.main) {
+        case 'Clear':
+          setState(() {
+            path = "assets/images/clear.png";
+          });
+          break;
+
+        case 'Rain':
+          setState(() {
+            path = "assets/images/rain.png";
+          });
+          break;
+
+        case 'Snow':
+          setState(() {
+            path = "assets/images/snow.png";
+          });
+          break;
+
+        case 'Clouds':
+          setState(() {
+            path = "assets/images/cloud.png";
+          });
+          break;
+
+        case 'Mist':
+          setState(() {
+            path = "assets/images/mist.png";
+          });
+          break;
+
+        default:
+          setState(() {
+            path = "assets/images/not-found.png";
+          });
+          break;
+      }
+    }
 
     return Scaffold(
-      body: Center(
+      body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextFormField(
-            controller: city,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                wheaterViewModel.fetchWeather(city.text);
-              },
-              child: const Text("test")),
-          if (wheaterViewModel.loading)
-            const Center(child: CircularProgressIndicator())
-          else if (wheaterViewModel.error.isNotEmpty)
-            Text(wheaterViewModel.error)
-          else if (wheaterViewModel.weather != null)
-            Column(
-              children: [
-                Text('Status = ${wheaterViewModel.weather!.main}'),
-                Text('Description = ${wheaterViewModel.weather!.description}'),
-                Text('Temp = ${wheaterViewModel.weather!.temp}'),
-                Text('Speed = ${wheaterViewModel.weather!.wind}')
-              ],
-            )
-        ],
-      )),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                height: 55.0,
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Color.fromARGB(255, 99, 99, 99),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: Offset(0, 0.5))
+                    ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.location_on,
+                        color: Color.fromARGB(255, 8, 90, 0),
+                        size: 25,
+                      ),
+                    ),
+                    Flexible(
+                      child: TextFormField(
+                        controller: city,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(0.0),
+                          hintText: 'Search Location',
+                          hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 151, 151, 151),
+                            fontSize: 17.0,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 17.0,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          onPress(city.text);
+                        },
+                        child: const Icon(
+                          Icons.search,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              if (wheaterViewModel.loading)
+                const CircularProgressIndicator()
+              else if (wheaterViewModel.error.isNotEmpty)
+                Text(wheaterViewModel.error)
+              else if (wheaterViewModel.weather != null && path != null)
+                Column(
+                  children: [
+                    Image.asset(
+                      path ?? "assets/images/not-found.png",
+                      height: 200,
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      capitalizeWord(city.text),
+                      style: const TextStyle(
+                          fontSize: 23, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      capitalizeEachWord(wheaterViewModel.weather!.description),
+                      style: const TextStyle(fontSize: 17),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.water,
+                              size: 35,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              children: [
+                                const Text(
+                                  "Temp",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(wheaterViewModel.weather!.temp.toString())
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.air,
+                              size: 35,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              children: [
+                                const Text(
+                                  "Wind",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(wheaterViewModel.weather!.wind.toString())
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                )
+            ],
+          )),
     );
   }
 }
