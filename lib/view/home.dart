@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wheater_app/view-model/wheater.view-model.dart';
+import 'package:wheater_app/view-model/view-model-weather.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -65,11 +65,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final wheaterViewModel = Provider.of<WeatherViewModel>(context);
+    final weatherViewModel = Provider.of<WeatherViewModel>(context);
     void onPress(String city) async {
-      await wheaterViewModel.fetchWeather(city);
-      if (wheaterViewModel.weather != null) {
-        changePath(wheaterViewModel.weather!.main);
+      await weatherViewModel.fetchWeather(city);
+      if (weatherViewModel.weather != null) {
+        changePath(weatherViewModel.weather!.main);
       }
       setState(() {
         path;
@@ -144,11 +144,11 @@ class _HomeState extends State<Home> {
               const SizedBox(
                 height: 10,
               ),
-              if (wheaterViewModel.loading)
+              if (weatherViewModel.loading)
                 const CircularProgressIndicator()
-              else if (wheaterViewModel.error.isNotEmpty)
-                Text(wheaterViewModel.error)
-              else if (wheaterViewModel.weather != null)
+              else if (weatherViewModel.error.isNotEmpty)
+                Text(weatherViewModel.error)
+              else if (weatherViewModel.weather != null)
                 Column(
                   children: [
                     Image.asset(
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
                       height: 5,
                     ),
                     Text(
-                      capitalizeEachWord(wheaterViewModel.weather!.description),
+                      capitalizeEachWord(weatherViewModel.weather!.description),
                       style: const TextStyle(fontSize: 17),
                     ),
                     const SizedBox(
@@ -191,7 +191,7 @@ class _HomeState extends State<Home> {
                                   "Temp",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Text(wheaterViewModel.weather!.temp.toString())
+                                Text(weatherViewModel.weather!.temp.toString())
                               ],
                             )
                           ],
@@ -211,7 +211,7 @@ class _HomeState extends State<Home> {
                                   "Wind",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Text(wheaterViewModel.weather!.wind.toString())
+                                Text(weatherViewModel.weather!.wind.toString())
                               ],
                             )
                           ],

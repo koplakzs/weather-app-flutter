@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wheater_app/model/api_weather.dart';
-import 'package:wheater_app/model/wheater.model.dart';
+import 'package:wheater_app/model/weather.model.dart';
 
 class WeatherViewModel extends ChangeNotifier {
   Weather? _weather;

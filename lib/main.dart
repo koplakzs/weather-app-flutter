@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:wheater_app/view-model/wheater.view-model.dart';
+import 'package:wheater_app/view-model/view-model-weather.dart';
 import 'package:wheater_app/view/home.dart';
 
 void main() async {
