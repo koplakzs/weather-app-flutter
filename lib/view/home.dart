@@ -34,49 +34,46 @@ class _HomeState extends State<Home> {
   }
 
   String? path;
+
+  void changePath(String main) {
+    switch (main) {
+      case 'Clear':
+        path = "assets/images/clear.png";
+        break;
+
+      case 'Rain':
+        path = "assets/images/rain.png";
+        break;
+
+      case 'Snow':
+        path = "assets/images/snow.png";
+        break;
+
+      case 'Clouds':
+        path = "assets/images/cloud.png";
+        break;
+
+      case 'Haze':
+        path = "assets/images/mist.png";
+        break;
+
+      default:
+        path = "assets/images/not-found.png";
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final wheaterViewModel = Provider.of<WeatherViewModel>(context);
-    void onPress(String city) {
-      wheaterViewModel.fetchWeather(city);
-      print(wheaterViewModel.weather!.main);
-      switch (wheaterViewModel.weather!.main) {
-        case 'Clear':
-          setState(() {
-            path = "assets/images/clear.png";
-          });
-          break;
-
-        case 'Rain':
-          setState(() {
-            path = "assets/images/rain.png";
-          });
-          break;
-
-        case 'Snow':
-          setState(() {
-            path = "assets/images/snow.png";
-          });
-          break;
-
-        case 'Clouds':
-          setState(() {
-            path = "assets/images/cloud.png";
-          });
-          break;
-
-        case 'Mist':
-          setState(() {
-            path = "assets/images/mist.png";
-          });
-          break;
-
-        default:
-          setState(() {
-            path = "assets/images/not-found.png";
-          });
-          break;
+    void onPress(String city) async {
+      await wheaterViewModel.fetchWeather(city);
+      if (wheaterViewModel.weather != null) {
+        changePath(wheaterViewModel.weather!.main);
       }
+      setState(() {
+        path;
+      });
     }
 
     return Scaffold(
@@ -151,7 +148,7 @@ class _HomeState extends State<Home> {
                 const CircularProgressIndicator()
               else if (wheaterViewModel.error.isNotEmpty)
                 Text(wheaterViewModel.error)
-              else if (wheaterViewModel.weather != null && path != null)
+              else if (wheaterViewModel.weather != null)
                 Column(
                   children: [
                     Image.asset(
